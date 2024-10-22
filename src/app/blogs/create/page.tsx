@@ -15,10 +15,7 @@ const CreateBlogPage = () => {
   const [editorContent, setEditorContent] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-
-  const editor = useCreateBlockNote({
-  
-  });
+   const {editor} = useEditor()
 
   useEffect(() => {
     // Check if the user is authenticated
@@ -33,7 +30,9 @@ const CreateBlogPage = () => {
 
   const handleCreateBlog = async () => {
     try {
-const token = await localStorage.getItem("authToken");
+      const token = await localStorage.getItem("authToken");
+      if (title.length ===0) throw "Need Title";
+      ;
       
       await api.blogs.create.post({
         title,
@@ -58,7 +57,7 @@ const token = await localStorage.getItem("authToken");
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container flex flex-col mx-auto py-8">
       <h1 className="text-4xl font-bold mb-6">Create New Blog</h1>
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">Title</label>
@@ -71,10 +70,10 @@ const token = await localStorage.getItem("authToken");
         />
       </div>
       <div className="mb-6">
-        <BlockNoteView editor={editor}   onChange={(newEditorContent) => {
+          <BlockNoteView editor={editor} onChange={(newEditorContent) => {
       setEditorContent(newEditorContent.document);
     }}/>
-      </div>
+             </div>
       <button onClick={handleCreateBlog} className="btn btn-primary">
         Create Blog
       </button>
@@ -83,4 +82,14 @@ const token = await localStorage.getItem("authToken");
 };
 
 export default CreateBlogPage;
+
+
+
+export function useEditor(){
+
+  const editor = useCreateBlockNote();
+
+  return {editor};
+
+}
 

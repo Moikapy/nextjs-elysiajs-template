@@ -23,6 +23,8 @@ const AllBlogsPage = () => {
     const fetchBlogs = async () => {
       try {
         const response = await api.blogs.get();
+        console.log(response);
+        
         setBlogs(response.data.body.blogs);
       } catch (error) {
         console.error("Failed to fetch blogs", error);
@@ -35,25 +37,32 @@ const AllBlogsPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container flex flex-col mx-auto py-8">
+    <div className={'mb-3'}>
       <h1 className="text-4xl font-bold mb-6">All Blogs</h1>
       {isAuthenticated && (
         <Link className="btn btn-primary mt-6" href="/blogs/create">
           Create New Blog
         </Link>
       )}
+      </div>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs?.map((blog) => (
-            <li key={blog._id} className="mb-4">
-              <Link className="text-lg text-primary" href={`/blogs/${blog._id}`}>
-                {blog.title}
+            <div key={blog._id} className="card bg-neutral p-6 border font-black border-accent">
+              <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
+              <div className="mb-4">
+                {/* Render a preview of the first few blocks of the blog content */}
+                {/*<BlogRenderer content={blog.content.slice(0, 3)} />*/}
+              </div>
+              <Link className="text-secondary hover:text-primary" href={`/blogs/${blog._id}`}>
+                Read More →
               </Link>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
     </div>

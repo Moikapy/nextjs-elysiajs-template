@@ -7,18 +7,78 @@ const BlogRenderer = ({ content }) => {
     return <p>No content available.</p>;
   }
 
+  console.log(content);
+  
+
   return (
     <div>
       {content.map((block, index) => {
         switch (block.type) {
           case "paragraph":
-            return <p key={index}>{block.content || ""}</p>;
+            if(Array.isArray(block.content)){
+              return block.content.map((el,index)=>{
+                if(el.type ==='text'){
+                    return <p key={index} className={
+                      el?.styles?.bold?'font-bold ':''
+                    }
+                    >{el.text || ""}</p>;
+                }
+                
+              })
+            }
+            if(typeof block.content=== 'string'){
+
+              return <p key={index}>{block.content || ""}</p>;
+
+            }
+
+            return <div/>
           case "heading":
-            return <h2 key={index}>{block.content || ""}</h2>;
+            if(Array.isArray(block.content)){
+              return block.content.map((el,index)=>{
+                if(el.type ==='text'){
+                   switch(block.content.props.level){
+                     case 1:
+                       return<h1>{el.text}</h1>
+                     case 2:
+                       return<h2>{el.text}</h2>
+                     case 3:
+                       return<h3>{el.text}</h3>
+                   } 
+                }
+                
+              })
+            }
           case "bulletListItem":
-            return <li key={index} style={{ listStyleType: "disc" }}>{block.content || ""}</li>;
+            if(Array.isArray(block.content)){
+             return(
+               <ul>
+               {
+                block.content.map((el,index)=>{
+                if(el.type ==='text'){
+                   return <li key={index} style={{ listStyleType: "disc" }}>{el.text || ""}</li>
+                }
+              })
+
+               }
+               </ul>
+             )
+            }
           case "numberedListItem":
-            return <li key={index} style={{ listStyleType: "decimal" }}>{block.content || ""}</li>;
+            if(Array.isArray(block.content)){
+             return(
+               <ol>
+               {
+                block.content.map((el,index)=>{
+                if(el.type ==='text'){
+                   return <li key={index} style={{ listStyleType: "decimal" }}>{el.text || ""}</li>
+                }
+              })
+
+               }
+               </ol>
+             )
+            }
           case "checkListItem":
             return (
               <div key={index}>
@@ -32,9 +92,13 @@ const BlogRenderer = ({ content }) => {
                 <tbody>
                   {block.content.rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {row.cells.map((cell, cellIndex) => (
-                        <td key={cellIndex} className="border px-4 py-2">{cell}</td>
-                      ))}
+                      {row.cells.map((cell, cellIndex) => 
+                       {
+                         return cell.map((c,i)=>{
+                           return(
+                             <td key={i} className="border px-4 py-2">{c.text}</td>                                      )
+                         })
+                       })}
                     </tr>
                   ))}
                 </tbody>
